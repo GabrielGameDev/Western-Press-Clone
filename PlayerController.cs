@@ -5,9 +5,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
 	public int playerIndex;
+	public Animator anim;
 
 	private int keyIndex = 8;
 	private bool canPlay = false;
+
+	private float timer;
+	private float nextKeyTime;
 	// Use this for initialization
 	IEnumerator Start () {
 
@@ -29,6 +33,19 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
+		timer += Time.deltaTime;
+
+		if(playerIndex == 1)
+		{
+			if(Time.time > nextKeyTime)
+			{
+				nextKeyTime = Time.time + Random.Range(0.25f, 0.5f);
+				KeyPress();
+			}
+
+			return;
+		}
+
 		if (Input.GetKeyDown(LevelController.instance.gameKeys[keyIndex].key))
 		{
 			KeyPress();
@@ -42,6 +59,15 @@ public class PlayerController : MonoBehaviour {
 		keyIndex--;
 
 		if (keyIndex < 0)
+		{
 			canPlay = false;
+			LevelController.instance.UpdatePlayerTime(timer, playerIndex);
+		}
+			
+	}
+
+	public void SetAnimation(string triggerAnimation)
+	{
+		anim.SetTrigger(triggerAnimation);
 	}
 }

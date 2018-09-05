@@ -22,6 +22,12 @@ public class LevelController : MonoBehaviour {
 	public Image[] player1Images;
 	public Image[] player2Images;
 
+	public Text messageText;
+	public Text[] playersTimeText;
+	public float[] playersTime;
+
+	public PlayerController[] players;
+
 	public bool canPlay = false;
 
 	private void Awake()
@@ -36,10 +42,7 @@ public class LevelController : MonoBehaviour {
 
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	
 
 	IEnumerator StartingKeys()
 	{
@@ -57,7 +60,20 @@ public class LevelController : MonoBehaviour {
 		}
 
 		canPlay = true;
+		messageText.text = "Go";
+		StartCoroutine(Fading(messageText));
 
+	}
+
+	IEnumerator Fading(Text text)
+	{
+		Color newColor = text.color;
+		while (newColor.a > 0)
+		{
+			newColor.a -= Time.deltaTime;
+			text.color = newColor;
+			yield return null;
+		}
 	}
 
 	public void NextKey(int playerIndex, int keyIndex)
@@ -70,5 +86,32 @@ public class LevelController : MonoBehaviour {
 		{
 			player2Images[keyIndex].enabled = false;
 		}
+	}
+
+	public void UpdatePlayerTime(float time, int player)
+	{
+		playersTime[player] = time;
+
+		if(playersTime[0] > 0 && playersTime[1] > 0)
+		{
+			string[] triggersAnims = new string[2];
+			if(playersTime[0] > playersTime[1])
+			{
+				triggersAnims[0] = "Dead";
+				triggersAnims[1] = "Shoot";
+			}
+			else
+			{
+				triggersAnims[1] = "Dead";
+				triggersAnims[0] = "Shoot";
+			}
+
+			for (int i = 0; i < playersTime.Length; i++)
+			{
+				players[i].SetAnimation(triggersAnims[i]);
+				playersTimeText[i].text = playersTime[i].ToString("0.00") + " s";
+			}
+		}
+		
 	}
 }
