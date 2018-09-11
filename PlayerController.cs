@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour {
 	public int playerIndex;
 	public Animator anim;
 
+	public bool npc = false;
+
 	private int keyIndex = 8;
 	private bool canPlay = false;
 
@@ -35,7 +37,7 @@ public class PlayerController : MonoBehaviour {
 
 		timer += Time.deltaTime;
 
-		if(playerIndex == 1)
+		if(npc)
 		{
 			if(Time.time > nextKeyTime)
 			{
@@ -46,9 +48,15 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
-		if (Input.GetKeyDown(LevelController.instance.gameKeys[keyIndex].key))
+		
+
+		if (Input.GetButtonDown(LevelController.instance.gameKeys[keyIndex].key[playerIndex]))
 		{
 			KeyPress();
+		}
+		else if (Input.anyKeyDown)
+		{
+			timer += 0.2f;
 		}
 
 	}

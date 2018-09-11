@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public class Keys
 {
 	public Sprite keySprite;
-	public KeyCode key;
+	public string[] key;
 }
 
 public class LevelController : MonoBehaviour {
@@ -28,7 +29,11 @@ public class LevelController : MonoBehaviour {
 
 	public PlayerController[] players;
 
+	public RectTransform[] cursor;
+
 	public bool canPlay = false;
+
+	public GameObject restartButton;
 
 	private void Awake()
 	{
@@ -48,6 +53,12 @@ public class LevelController : MonoBehaviour {
 	{
 		for (int i = 0; i < player1Images.Length; i++)
 		{
+
+			for (int y = 0; y < cursor.Length; y++)
+			{
+				cursor[y].anchoredPosition = new Vector2(cursor[y].anchoredPosition.x, cursor[y].anchoredPosition.y + 45);
+			}
+
 			gameKeys.Add(keys[UnityEngine.Random.Range(0, keys.Length)]);
 			player1Images[i].sprite = gameKeys[i].keySprite;
 			player1Images[i].preserveAspect = true;
@@ -78,7 +89,9 @@ public class LevelController : MonoBehaviour {
 
 	public void NextKey(int playerIndex, int keyIndex)
 	{
-		if(playerIndex == 0)
+		cursor[playerIndex].anchoredPosition = new Vector2(cursor[playerIndex].anchoredPosition.x, cursor[playerIndex].anchoredPosition.y - 45);
+
+		if (playerIndex == 0)
 		{
 			player1Images[keyIndex].enabled = false;
 		}
@@ -111,7 +124,14 @@ public class LevelController : MonoBehaviour {
 				players[i].SetAnimation(triggersAnims[i]);
 				playersTimeText[i].text = playersTime[i].ToString("0.00") + " s";
 			}
+
+			restartButton.SetActive(true);
 		}
 		
+	}
+
+	public void RestartScene()
+	{
+		SceneManager.LoadScene(0);
 	}
 }
